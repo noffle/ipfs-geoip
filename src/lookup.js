@@ -2,6 +2,7 @@
 
 const memoize = require('memoizee')
 const inet = require('inet_ipv4')
+const bs58 = require('bs58')
 
 const formatData = require('./format')
 
@@ -29,11 +30,11 @@ function _lookup (ipfs, hash, lookfor, cb) {
 
       const next = res.links[child - 1]
 
-      if (!next || !next.Hash) {
+      if (!next || !next.hash) {
         return cb(new Error('Failed to lookup node'))
       }
 
-      return memoized_lookup(ipfs, next.Hash, lookfor, cb)
+      return memoized_lookup(ipfs, bs58.encode(next.hash).toString(), lookfor, cb)
     } else if (obj.type === 'Leaf') {
       while (obj.data[child] && obj.data[child].min <= lookfor) {
         child++
